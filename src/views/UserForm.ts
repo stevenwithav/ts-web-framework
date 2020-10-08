@@ -1,30 +1,37 @@
-export class UserForm {
-	constructor(public parent: Element) {}
+import { User, UserProps } from '../models/User';
+import { View } from './View';
 
+export class UserForm extends View<User, UserProps> {
 	eventsMap(): { [key: string]: () => void } {
 		return {
-			'click:button': this.onButtonClick,
+			'click:.set-age': this.onSetAgeClick,
+			'click:.set-name': this.onSetNameClick,
 		};
 	}
 
-	onButtonClick(): void {
-		console.log('clicked');
-	}
+	onSetAgeClick = (): void => {
+		this.model.setRandomAge();
+	};
+
+	onSetNameClick = (): void => {
+		const input = this.parent.querySelector('input');
+		if (input) {
+			const name = input.value;
+
+			this.model.set({ name });
+		}
+	};
 
 	template(): string {
 		return `
       <div>
         <h1>User Form</h1>
-        <input />
-        <button>Click me</button>
+        <div>User name: ${this.model.get('name')}</div>
+        <div>User age: ${this.model.get('age')}</div>
+        <input class="name" />
+        <button class="set-name">Update name</button>
+        <button class="set-age">Set random age</button>
       </div>
     `;
-	}
-
-	render(): void {
-		const templateElement = document.createElement('template');
-		templateElement.innerHTML = this.template();
-
-		this.parent.append(templateElement.content);
 	}
 }
